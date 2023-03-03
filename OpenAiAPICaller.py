@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: <encoding name> -*-
+import os
+
 _author_ = 'Dongxu'
 import openai
 from TTS_moudle import write2wav
@@ -12,12 +14,6 @@ def call_chat_api(message, apiKey):
 
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        # messages=[
-        #     {"role": "user",
-        #      "content": "hello, I need practice my English, "
-        #                 "please work as a chatBot with me, "
-        #                 "and if there is any errors in my grammar please correct them!"}
-        # ]
         messages=[
             {"role": "user",
              "content": message
@@ -40,7 +36,6 @@ def apiInputer():
     if not len(apiKey) == 51:
         print("please check your apiKey")
         exit()
-
     return apiKey
 
 
@@ -48,15 +43,31 @@ def init_by_prompt(apiKey):
     print("model is initialing， please wait for a while...")
     call_chat_api("I am practicing my English, please help me with that, "
                   "and if you find my grammar error please let me know", apiKey=apiKey)
+    print("model initial finished.")
+
+
+def read_api_from_txt():
+    print("loading apiKey from txt file...")
+    if not os.path.isfile("apiKey.txt"):
+        print("please create a txt file named 'apiKey', and parse your openAI APIkey into it.")
+        exit()
+
+    with open('apiKey.txt', 'r') as f:
+        content = f.read()
+        if not len(content) == 51:
+            print("please check your apiKey")
+            exit()
+        return content
 
 
 if __name__ == '__main__':
-    apiKey = apiInputer()
+    apiKey = read_api_from_txt()
     init_by_prompt(apiKey=apiKey)
     while True:
-        print("print your sentence:")
+        print("enter your sentence and press ENTER key in your keyboard")
         usrInput = input()
-        res = call_chat_api(usrInput + ", and please reply within 25 words", apiKey=apiKey)
+        res = call_chat_api(usrInput + ", and please reply no more than 25 words", apiKey=apiKey)
+        # res = call_chat_api(usrInput, apiKey=apiKey)
         signal = write2wav(res)
         print(res)
         if signal == 1:
