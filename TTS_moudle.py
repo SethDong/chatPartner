@@ -8,6 +8,7 @@ import torchaudio
 from speechbrain.pretrained import Tacotron2
 from speechbrain.pretrained import HIFIGAN
 
+
 # Intialize TTS (tacotron2) and Vocoder (HiFIGAN)
 if torch.cuda.is_available():
     tacotron2 = Tacotron2.from_hparams(source="speechbrain/tts-tacotron2-ljspeech", savedir="tmpdir_tts",
